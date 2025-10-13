@@ -170,3 +170,39 @@ body {
         overflow: auto;
     }
 }
+
+.more-info {
+    background: rgb(138, 93, 30);
+    padding: 20px 10px;
+    right: 0;
+    top: 20px;
+    min-width: 350px;
+    z-index: 999;
+    color: white;
+}
+
+.more-info__block {
+    display: flex;
+    flex-direction: column;
+}
+
+.more-info__image {
+    width: 100%;
+}
+
+.more-info h2 {
+    padding-bottom: 15px;
+}
+
+.more-info p {
+    padding-bottom: 10px;
+}
+
+.more-info img {
+    padding-bottom: 10px;
+}
+
+.more-info a {
+    padding-bottom: 8px;
+    color: rgb(61, 202, 234);
+}

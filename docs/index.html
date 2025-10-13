@@ -12,7 +12,11 @@
         <div class="map-background" id="mapBackground">
             <!-- House plots will be dynamically positioned here -->
         </div>
+        <div class="more-info" id="more-info">
+            Click on a plot to get more info
+        </div>
     </div>
+
 
     <div class="legend">
         <h3>Legend</h3>
@@ -31,6 +35,7 @@
 
     <script>
         let housingData = [];
+        let allPlotData = {};
 
         function getDigitsOnly(inputString) {
         // The regex pattern \D matches any character that is NOT a digit.
@@ -38,8 +43,7 @@
         return parseInt(inputString.replace(/\D/g, ''), 10);
         }
 
-
-        const apiKey = 'AIzaSyDvg7T4yBMPicNUucxhxKBrZUTYAfIFqS8';       // Replace with your API Key
+        const apiKey = process.env.GOOGLE_API_KEY;       // Replace with your API Key
         const spreadsheetId = '1WWK7kqyoA_qjW3sYMo87S0Rp36ccifFPjBvuX2jQyVk'; // Replace with your Spreadsheet ID
         const range = 'Plot List!A1:D56';             // Replace with your sheet name and cell range (A1 notation)
 
@@ -117,6 +121,7 @@
                 const response = await fetch('plot-positions.json');
                 const data = await response.json();
                 plotPositions = data.plotPositions;
+                allPlotData = data.plotPositions;
                 mapImageData = data.referenceImage;
                 // console.log('Plot positions loaded successfully:', data);
             } catch (error) {
@@ -133,9 +138,10 @@
             mapBackground.innerHTML = '';
             
             plotPositions.forEach((position) => {
-                const plot = document.createElement('div');
+                const plot = document.createElement('button');
                 plot.className = 'house-plot';
                 plot.textContent = position.plotNumber;
+                plot.dataset.plotID = position.plotNumber;
                 
                 // Check if plot is occupied
                 if (housingData[position.plotNumber]) {
@@ -215,6 +221,81 @@
             mapImage.src = 'map.jpg';
         }
 
+        const getPlotReservationPerson = (plotNumber) => {
+            return housingData[plotNumber];
+        }
+
+        const getPlotDataFor = (plotNumber) => {
+            return allPlotData[plotNumber];
+        }
+
+        const getScreenshotURL = (plotNumber) => {
+            return `https://housing-media.wowdb.com/maps/plots/alliance/${plotNumber}.jpg`
+        }
+
+        const buildMoreInfo = (plotNumber) => {
+            const plotReservationPerson = getPlotReservationPerson(plotNumber);
+            const plotData = getPlotDataFor(plotNumber);
+            const isFree = !plotReservationPerson;
+            const rootContainer = document.getElementById('more-info');
+            rootContainer.innerHTML = '';
+
+            const screenShotURL= getScreenshotURL(plotNumber);
+
+            // heading
+            const heading = document.createElement('h2');
+            heading.textContent = `Plot ${plotNumber}`;
+            // some paragraph
+            const para = document.createElement('p');
+            para.textContent = isFree ? "Reserve this today!" : `This plot has been reserved already by ${plotReservationPerson}`
+            // image
+            const image = document.createElement("img");
+            image.src = getScreenshotURL(plotNumber);
+            image.alt = "A preview of an image of the plot";
+            image.className = "more-info__image"
+            // full size image link
+            const fullSizeImageLink = document.createElement('a');
+            fullSizeImageLink.href = getScreenshotURL(plotNumber);
+            fullSizeImageLink.textContent = 'A large image of the plot';
+            fullSizeImageLink.target = '_blank'; // Open link in a new tab
+
+            // link
+            const link = document.createElement('a');
+            link.href =  plotData.url; 
+            link.textContent = 'A video of the plot';
+            link.target = '_blank'; // Open link in a new tab
+            link.className = 'more-info__link';
+
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = "more-info__block";
+
+            contentWrapper.appendChild(heading);
+            contentWrapper.appendChild(para);
+            contentWrapper.appendChild(image);
+            contentWrapper.appendChild(fullSizeImageLink);
+            contentWrapper.appendChild(link);
+
+            rootContainer.append(contentWrapper);
+        };
+
+        function initMoreInfoBlock() {
+            const buttons = document.querySelectorAll('button.house-plot');
+
+            function handleClick(event) {
+                console.log("clicked")
+                plotNumber = event.target.dataset.plotID;
+                buildMoreInfo(plotNumber);
+                // housingData
+
+            }
+
+            buttons.forEach((button) => {
+                button.addEventListener('click', handleClick);
+            })
+        }
+
+    
+
         // Initialize the map
         document.addEventListener('DOMContentLoaded', async function() {
             // Load plot positions from JSON file first
@@ -223,6 +304,7 @@
             await getData();
             // Create house plots after positions are loaded
             createHousePlots();
+            initMoreInfoBlock();
             
             // Update positions on window resize
             let plotResizeTimeout;
