@@ -103,12 +103,12 @@
                 46: "Wacsnie",
                 50: "Sungli"
             };
-            housingData = data.reduce((acc, row) => {
+            housingData = data ? data.reduce((acc, row) => {
                 const [plotName, availability, name] = row;
                 const plotNameFiltered = getDigitsOnly(plotName);
                 acc[plotNameFiltered] = name;
                 return acc;
-            }, {});
+            }, {}): [];
         }
 
         // Housing data from CSV
