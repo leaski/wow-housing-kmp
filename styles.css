@@ -81,7 +81,7 @@ body {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #93c47d;
     border: 1px solid #333;
     border-radius: 3px;
     display: flex;
@@ -96,18 +96,17 @@ body {
 }
 
 .house-plot:hover {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: #84ba6b;
     transform: scale(1.1);
     z-index: 20;
 }
 
 .house-plot.occupied {
-    background-color: rgba(76, 175, 80, 0.8);
-    color: white;
+    background-color: #a4c2f4;
 }
 
 .house-plot.occupied:hover {
-    background-color: rgba(76, 175, 80, 1);
+    background-color: #8fb0e8;
 }
 
 .plot-info {
@@ -156,11 +155,11 @@ body {
 }
 
 .legend-color.available {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #93c47d;
 }
 
 .legend-color.occupied {
-    background-color: rgba(76, 175, 80, 0.8);
+    background-color: #a4c2f4;
 }
 
 @media (max-width: 1000px) {
@@ -179,6 +178,17 @@ body {
     z-index: 999;
     color: white;
     min-height: 400px;
+    position: relative;
+    top: -60px;
+}
+
+.more-info::before {
+    content: 'below';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 50%;
+    color: white;
 }
 
 .more-info__block {
