@@ -11,7 +11,8 @@ export default async function handler(req, res) {
     // 2. DEFINE YOUR SHEETS PARAMETERS
     // You should hardcode these values or pass them securely from the frontend (e.g., in the request body)
     const spreadsheetId = '1WWK7kqyoA_qjW3sYMo87S0Rp36ccifFPjBvuX2jQyVk'; // <-- REPLACE with your ID
-    const range = 'Plot List!A1:D56'; // <-- REPLACE with your desired range
+    const range = 'Plot List!A2:C56'; // <-- REPLACE with your desired range
+    // id status name
     
     if (!apiKey || apiKey === 'YOUR_API_KEY') {
         return res.status(500).json({ success: false, message: 'API Key not configured securely.' });

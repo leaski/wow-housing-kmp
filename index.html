@@ -44,10 +44,6 @@
         return parseInt(inputString.replace(/\D/g, ''), 10);
         }
 
-        const spreadsheetId = '1WWK7kqyoA_qjW3sYMo87S0Rp36ccifFPjBvuX2jQyVk'; // Replace with your Spreadsheet ID
-        const range = 'Plot List!A1:D56';             // Replace with your sheet name and cell range (A1 notation)
-
-
         async function fetchGoogleSheetDataSecurely() {
             const outputElement = document.getElementById('output');
             outputElement
@@ -59,19 +55,27 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                console.log(response)
                 
                 const result = await response.json();
                 
                 if (result.success && result.data.length > 0) {
-                    // Display the filtered data received from the backend
-                    outputElement.textContent = JSON.stringify(result.data, null, 2);
+                    let data;
+                    const rows = result.data;
+                    console.log(rows)
+                    if (rows && rows.length) {
+
+                        const filteredRows = rows.filter((data) => {
+                            const [plotName, availability, name] = data;
+                            if (name) return data;
+                        })
+                        data = filteredRows;
+                    }
+                    return data;
                 } else if (result.success && result.data.length === 0) {
-                    outputElement.textContent = 'No filtered data found.';
+                    console.log('No filtered data found.');
                 } else {
                     // Handle errors passed back from the serverless function
-                    outputElement.textContent = `Error: ${result.message}\nDetails: ${JSON.stringify(result.details || 'N/A', null, 2)}`;
+                    console.log(`Error: ${result.message}\nDetails: ${JSON.stringify(result.details || 'N/A', null, 2)}`);
                 }
                 
             } catch (error) {
