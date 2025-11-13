@@ -15,7 +15,6 @@
         <div class="more-info" id="more-info">
             Click on a plot to get more info
         </div>
-        <div id=""output"></div>
     </div>
 
 
@@ -44,10 +43,7 @@
         return parseInt(inputString.replace(/\D/g, ''), 10);
         }
 
-        async function fetchGoogleSheetDataSecurely() {
-            const outputElement = document.getElementById('output');
-            outputElement
-            
+        async function fetchGoogleSheetDataSecurely() { 
             try {
                 // *** CALL YOUR VERCEL SERVERLESS FUNCTION ***
                 const response = await fetch('/api/get-sheet-data');
@@ -61,7 +57,6 @@
                 if (result.success && result.data.length > 0) {
                     let data;
                     const rows = result.data;
-                    console.log(rows)
                     if (rows && rows.length) {
 
                         const filteredRows = rows.filter((data) => {
@@ -72,19 +67,17 @@
                     }
                     return data;
                 } else if (result.success && result.data.length === 0) {
-                    console.log('No filtered data found.');
+                    // console.log('No filtered data found.');
                 } else {
                     // Handle errors passed back from the serverless function
                     console.log(`Error: ${result.message}\nDetails: ${JSON.stringify(result.details || 'N/A', null, 2)}`);
                 }
                 
             } catch (error) {
-                outputElement.textContent = `Fetch Error: ${error.message}`;
                 console.error('Frontend Fetch error:', error);
             }
         }
 
-        
         async function getData(){
             const data = await fetchGoogleSheetDataSecurely();
 
@@ -112,7 +105,6 @@
             };
             housingData = data.reduce((acc, row) => {
                 const [plotName, availability, name] = row;
-                console.log(name)
                 const plotNameFiltered = getDigitsOnly(plotName);
                 acc[plotNameFiltered] = name;
                 return acc;
@@ -253,9 +245,13 @@
             // heading
             const heading = document.createElement('h2');
             heading.textContent = `Plot ${plotNumber}`;
-            // some paragraph
+            // reserve text or link
             const para = document.createElement('p');
-            para.textContent = isFree ? "Reserve this today!" : `This plot has been reserved already by ${plotReservationPerson}`
+            para.textContent = `This plot has been reserved already by ${plotReservationPerson}`;
+            const reserveLink = document.createElement('a');
+            reserveLink.textContent = "Reserve this plot today!";
+            reserveLink.href = `https://docs.google.com/forms/d/e/1FAIpQLScYywIMx793AdHc6_rO9c9huOy-IJUI61PZjcIqF6tdqEOLow/viewform?usp=pp_url&entry.1524005066=Plot+${plotNumber}`
+            reserveLink.target = '_blank'; // Open link in a new tab
             // image
             const image = document.createElement("img");
             image.src = getScreenshotURL(plotNumber);
@@ -278,7 +274,11 @@
             contentWrapper.className = "more-info__block";
 
             contentWrapper.appendChild(heading);
-            contentWrapper.appendChild(para);
+            if(isFree) {
+                contentWrapper.appendChild(reserveLink);
+            } else {
+                contentWrapper.appendChild(para);
+            }
             contentWrapper.appendChild(image);
             contentWrapper.appendChild(fullSizeImageLink);
             contentWrapper.appendChild(link);
@@ -290,7 +290,6 @@
             const buttons = document.querySelectorAll('button.house-plot');
 
             function handleClick(event) {
-                console.log("clicked")
                 plotNumber = event.target.dataset.plotID;
                 buildMoreInfo(plotNumber);
                 // housingData
