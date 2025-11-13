@@ -15,6 +15,7 @@
         <div class="more-info" id="more-info">
             Click on a plot to get more info
         </div>
+        <div id=""output"></div>
     </div>
 
 
@@ -43,38 +44,13 @@
         return parseInt(inputString.replace(/\D/g, ''), 10);
         }
 
-        const apiKey = process.env.GOOGLE_API_KEY;       // Replace with your API Key
         const spreadsheetId = '1WWK7kqyoA_qjW3sYMo87S0Rp36ccifFPjBvuX2jQyVk'; // Replace with your Spreadsheet ID
         const range = 'Plot List!A1:D56';             // Replace with your sheet name and cell range (A1 notation)
 
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
-
-        async function fetchGoogleSheetData() {
-            const outputElement = document.getElementById('output');
-            outputElement.textContent = "Fetching data securely...";
-            
-            try {
-                // Call YOUR Vercel Serverless Function, NOT the external API
-                const response = await fetch('/api/get-data');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                // Display the results received from the server
-                outputElement.textContent = JSON.stringify(result.payload, null, 2);
-                
-            } catch (error) {
-                outputElement.textContent = `Error: ${error.message}`;
-                console.error('Fetch error:', error);
-            }
-        }
 
         async function fetchGoogleSheetDataSecurely() {
             const outputElement = document.getElementById('output');
-            outputElement.textContent = "Fetching data securely from the server...";
+            outputElement
             
             try {
                 // *** CALL YOUR VERCEL SERVERLESS FUNCTION ***
@@ -83,6 +59,8 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                console.log(response)
                 
                 const result = await response.json();
                 

@@ -6,12 +6,12 @@ import fetch from 'node-fetch';
 export default async function handler(req, res) {
     // 1. SECURELY ACCESS THE KEY
     // This environment variable MUST be set in your Vercel project settings!
-    const apiKey = process.env.SHEETS_API_KEY;
+    const apiKey = process.env.GOOGLE_API_KEY;
     
     // 2. DEFINE YOUR SHEETS PARAMETERS
     // You should hardcode these values or pass them securely from the frontend (e.g., in the request body)
-    const spreadsheetId = 'YOUR_SPREADSHEET_ID'; // <-- REPLACE with your ID
-    const range = 'Sheet1!A:C'; // <-- REPLACE with your desired range
+    const spreadsheetId = '1WWK7kqyoA_qjW3sYMo87S0Rp36ccifFPjBvuX2jQyVk'; // <-- REPLACE with your ID
+    const range = 'Plot List!A1:D56'; // <-- REPLACE with your desired range
     
     if (!apiKey || apiKey === 'YOUR_API_KEY') {
         return res.status(500).json({ success: false, message: 'API Key not configured securely.' });
