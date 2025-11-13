@@ -1,0 +1,8 @@
+{
+  "name": "wow-housing-kmp",
+  "version": "1.0.0",
+  "description": "A secure Vercel static site with serverless functions.",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}
